@@ -184,7 +184,7 @@ export default function Graph3D({
         width={width}
         height={height}
         graphData={data}
-        backgroundColor="#0b0b10"
+        backgroundColor="rgba(0,0,0,0)"
         showNavInfo={false}
         nodeId="id"
         nodeLabel={(n) => `${n.kind}: ${n.label}`}
