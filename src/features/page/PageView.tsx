@@ -85,6 +85,15 @@ export function PageView({ docId, index, selected, page, onPage }: Props) {
     return out;
   }, [selected, index, page, geometry.data]);
 
+  // Bring the selected part's region into view inside the page pane.
+  useEffect(() => {
+    const el = wrap.current;
+    const self = boxes.find((b) => b.kind === "self");
+    if (!el || !self || !size || width === 0) return;
+    const top = (self.bbox[1] * width) / size.width;
+    el.scrollTo({ top: Math.max(0, top - 48), behavior: "smooth" });
+  }, [boxes, size, width]);
+
   if (!size) return null;
   const height = (width * size.height) / size.width;
   return (

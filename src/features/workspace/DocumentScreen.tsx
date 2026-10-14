@@ -10,6 +10,7 @@ import { useJobStream } from "@/features/build/useJobStream";
 import { useDocument, useGraph } from "@/features/data/hooks";
 import { useWorkspace } from "@/features/graph/store";
 import { HttpError } from "@/lib/api/errors";
+import { docName } from "@/lib/utils";
 import { Workspace } from "./Workspace";
 
 export function DocumentScreen({ id }: { id: string }) {
@@ -51,7 +52,7 @@ export function DocumentScreen({ id }: { id: string }) {
   }
   if (!doc.data)
     return <div className="p-10 font-mono text-xs text-fg-faint">$ waking the backend…</div>;
-  const title = doc.data.title ?? doc.data.file_name ?? "document";
+  const title = docName(doc.data.title, doc.data.file_name);
   if (doc.data.status === "failed" && !replay) {
     const err = doc.data.latest_job?.error;
     return (

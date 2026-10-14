@@ -58,13 +58,20 @@ function material(
     m =
       state === "selected"
         ? new MeshBasicMaterial({ color })
-        : new MeshLambertMaterial({
-            color,
-            emissive: color,
-            emissiveIntensity: state === "dim" ? 0.05 : 0.45,
-            transparent: true,
-            opacity: state === "dim" ? 0.12 : 0.95,
-          });
+        : state === "dim"
+          ? new MeshBasicMaterial({
+              color: "#2a2a34",
+              transparent: true,
+              opacity: 0.18,
+              depthWrite: false,
+            })
+          : new MeshLambertMaterial({
+              color,
+              emissive: color,
+              emissiveIntensity: 0.45,
+              transparent: true,
+              opacity: 0.95,
+            });
     materials.set(key, m);
   }
   return m;
@@ -104,7 +111,7 @@ export default function Graph3D({
   useEffect(() => {
     const fg = ref.current;
     if (!fg || !cinematic) return;
-    const bloom = new UnrealBloomPass(new Vector2(256, 256), 1.25, 0.6, 0.12);
+    const bloom = new UnrealBloomPass(new Vector2(256, 256), 0.85, 0.5, 0.28);
     fg.postProcessingComposer().addPass(bloom);
     setReady(true);
     return () => {
@@ -130,7 +137,7 @@ export default function Graph3D({
     if (!fg || !selected) return;
     const n = store.current.get(selected);
     if (!n || n.x === undefined || n.y === undefined || n.z === undefined) return;
-    const dist = 90;
+    const dist = 220;
     const ratio = 1 + dist / Math.max(1, Math.hypot(n.x, n.y, n.z));
     fg.cameraPosition(
       { x: n.x * ratio, y: n.y * ratio, z: n.z * ratio },
@@ -153,7 +160,7 @@ export default function Graph3D({
       const sprite = new SpriteText(
         text,
         n.kind === "document" ? 3.2 : 2.2,
-        state === "selected" ? "#ffffff" : "#d9d7cf",
+        state === "selected" ? "#c9b6cf" : "#a9a79f",
       );
       sprite.fontFace = "Geist Mono, ui-monospace, monospace";
       sprite.position.y = -s * 1.6 - 2;
@@ -177,7 +184,7 @@ export default function Graph3D({
         width={width}
         height={height}
         graphData={data}
-        backgroundColor="rgba(0,0,0,0)"
+        backgroundColor="#0b0b10"
         showNavInfo={false}
         nodeId="id"
         nodeLabel={(n) => `${n.kind}: ${n.label}`}

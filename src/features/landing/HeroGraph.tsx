@@ -7,6 +7,7 @@ import { useGraph, useSamples } from "@/features/data/hooks";
 import { GraphView } from "@/features/graph/GraphView";
 import { prefersReducedMotion } from "@/features/graph/store";
 import { buildIndex } from "@/lib/graph/index";
+import { docName } from "@/lib/utils";
 
 export function HeroGraph() {
   const samples = useSamples();
@@ -38,7 +39,7 @@ export function HeroGraph() {
       }
       statusDot="thread"
       statusLabel="live"
-      bodyClassName="p-0"
+      bodyClassName="p-0 md:p-0"
       strong
     >
       <div className="relative h-[440px]" data-testid="hero-graph">
@@ -65,7 +66,7 @@ export function HeroGraph() {
             href={`/d/${first.id}`}
             className="absolute bottom-3 right-3 rounded-md border border-border-bright bg-background/80 px-3 py-1.5 font-mono text-xs text-accent-thread backdrop-blur hover:border-accent-thread"
           >
-            $ open {first.title?.replaceAll("\n", " ").slice(0, 32) ?? "the sample"} →
+            $ open {docName(first.title, first.file_name).slice(0, 34)} →
           </Link>
         )}
       </div>

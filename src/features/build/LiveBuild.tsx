@@ -103,7 +103,7 @@ export function LiveBuild({ state, title }: { state: BuildState; title: string }
               state.status === "building" ? "thread" : state.status === "done" ? "green" : "red"
             }
             statusLabel={state.status}
-            bodyClassName="p-0"
+            bodyClassName="p-0 md:p-0"
           >
             <div
               ref={log}

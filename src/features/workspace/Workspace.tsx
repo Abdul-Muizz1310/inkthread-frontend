@@ -15,7 +15,7 @@ import type { Graph } from "@/lib/contract/graph";
 import { applyFilters } from "@/lib/graph/filters";
 import { buildIndex } from "@/lib/graph/index";
 import { shortestPath } from "@/lib/graph/path";
-import { cn } from "@/lib/utils";
+import { cn, docName } from "@/lib/utils";
 import { Legend } from "./Legend";
 
 type Props = { docId: string; graph: Graph; onReplay?: () => void };
@@ -151,7 +151,7 @@ export function Workspace({ docId, graph, onReplay }: Props) {
           className="min-w-0 truncate font-mono text-sm font-semibold text-foreground"
           title={graph.document.title ?? undefined}
         >
-          {graph.document.title?.replaceAll("\n", " ") || graph.document.file_name || "document"}
+          {docName(graph.document.title, graph.document.file_name)}
         </h1>
         <span className="font-mono text-[11px] text-fg-faint">
           {graph.document.page_count}p · {graph.nodes.length} nodes · {graph.edges.length} threads ·
@@ -310,7 +310,7 @@ export function Workspace({ docId, graph, onReplay }: Props) {
           minSize={22}
           className="flex min-h-0 flex-col border-l border-border"
         >
-          <PanelGroup direction="vertical">
+          <PanelGroup direction="vertical" className="h-full">
             <Panel defaultSize={50} minSize={20}>
               <PageView
                 docId={docId}

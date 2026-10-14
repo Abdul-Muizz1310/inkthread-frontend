@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSamples } from "@/features/data/hooks";
 import { TIER_COLOR } from "@/features/graph/palette";
+import { docName } from "@/lib/utils";
 
 export function Samples() {
   const samples = useSamples();
@@ -29,7 +30,7 @@ export function Samples() {
                 {/* sample */}
               </div>
               <h3 className="verbatim mt-2 line-clamp-2 text-lg leading-snug text-foreground">
-                {s.title?.replaceAll("\n", " ") ?? s.file_name}
+                {docName(s.title, s.file_name)}
               </h3>
               <div className="mt-3 font-mono text-[11px] text-fg-muted">
                 {s.page_count} pages · {s.stats?.nodes ?? "—"} nodes · {s.stats?.edges ?? "—"}{" "}
