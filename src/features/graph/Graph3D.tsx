@@ -8,14 +8,26 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph3D, { type ForceGraphMethods } from "react-force-graph-3d";
 import { Mesh, MeshBasicMaterial, MeshLambertMaterial, type Object3D, Vector2 } from "three";
-import SpriteText from "three-spritetext";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import SpriteText from "three-spritetext";
 import type { EdgeType, NodeKind } from "@/lib/contract/graph";
 import { edgeColor, NODE_COLOR, nodeSize, SELECTED } from "./palette";
 import { geometryFor } from "./shapes";
 
-export type VizNode = { id: string; kind: NodeKind; label: string; degree: number; fresh?: boolean };
-export type VizLink = { id: string; source: string; target: string; type: EdgeType; basis: "explicit" | "semantic" };
+export type VizNode = {
+  id: string;
+  kind: NodeKind;
+  label: string;
+  degree: number;
+  fresh?: boolean;
+};
+export type VizLink = {
+  id: string;
+  source: string;
+  target: string;
+  type: EdgeType;
+  basis: "explicit" | "semantic";
+};
 
 type Props = {
   nodes: VizNode[];
@@ -36,7 +48,10 @@ type N = VizNode & { x?: number; y?: number; z?: number };
 type L = VizLink;
 
 const materials = new Map<string, MeshLambertMaterial | MeshBasicMaterial>();
-function material(color: string, state: "normal" | "dim" | "selected"): MeshLambertMaterial | MeshBasicMaterial {
+function material(
+  color: string,
+  state: "normal" | "dim" | "selected",
+): MeshLambertMaterial | MeshBasicMaterial {
   const key = `${color}:${state}`;
   let m = materials.get(key);
   if (!m) {
@@ -117,19 +132,29 @@ export default function Graph3D({
     if (!n || n.x === undefined || n.y === undefined || n.z === undefined) return;
     const dist = 90;
     const ratio = 1 + dist / Math.max(1, Math.hypot(n.x, n.y, n.z));
-    fg.cameraPosition({ x: n.x * ratio, y: n.y * ratio, z: n.z * ratio }, { x: n.x, y: n.y, z: n.z }, reducedMotion ? 0 : 1200);
+    fg.cameraPosition(
+      { x: n.x * ratio, y: n.y * ratio, z: n.z * ratio },
+      { x: n.x, y: n.y, z: n.z },
+      reducedMotion ? 0 : 1200,
+    );
   }, [selected, reducedMotion]);
 
   const objectFor = (n: N): Object3D => {
-    const state = n.id === selected ? "selected" : highlight && !highlight.has(n.id) ? "dim" : "normal";
+    const state =
+      n.id === selected ? "selected" : highlight && !highlight.has(n.id) ? "dim" : "normal";
     const color = state === "selected" ? SELECTED : NODE_COLOR[n.kind];
     const mesh = new Mesh(geometryFor(n.kind), material(color, state));
     const s = nodeSize(n.kind, n.degree);
     mesh.scale.set(s, s, s);
-    const labelled = showLabels && (n.kind === "document" || n.kind === "section" || n.id === selected);
+    const labelled =
+      showLabels && (n.kind === "document" || n.kind === "section" || n.id === selected);
     if (labelled && state !== "dim") {
       const text = n.label.length > 42 ? `${n.label.slice(0, 40)}…` : n.label;
-      const sprite = new SpriteText(text, n.kind === "document" ? 3.2 : 2.2, state === "selected" ? "#ffffff" : "#d9d7cf");
+      const sprite = new SpriteText(
+        text,
+        n.kind === "document" ? 3.2 : 2.2,
+        state === "selected" ? "#ffffff" : "#d9d7cf",
+      );
       sprite.fontFace = "Geist Mono, ui-monospace, monospace";
       sprite.position.y = -s * 1.6 - 2;
       sprite.scale.multiplyScalar(1 / s);
@@ -160,7 +185,15 @@ export default function Graph3D({
         linkColor={(l) => (dimLink(l) ? "rgba(80,80,90,0.15)" : edgeColor(l.type))}
         linkOpacity={0.55}
         linkWidth={(l) => (l.type === "contains" ? 0.25 : l.basis === "semantic" ? 0.6 : 0.9)}
-        linkDirectionalParticles={(l) => (reducedMotion || dimLink(l) ? 0 : l.basis === "semantic" ? 2 : l.type === "contains" ? 0 : 1)}
+        linkDirectionalParticles={(l) =>
+          reducedMotion || dimLink(l)
+            ? 0
+            : l.basis === "semantic"
+              ? 2
+              : l.type === "contains"
+                ? 0
+                : 1
+        }
         linkDirectionalParticleWidth={1.6}
         linkDirectionalParticleSpeed={0.006}
         linkDirectionalParticleColor={(l) => edgeColor(l.type)}

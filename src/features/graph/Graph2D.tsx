@@ -7,9 +7,9 @@
 import { useEffect, useMemo, useRef } from "react";
 import ForceGraph2D, { type ForceGraphMethods } from "react-force-graph-2d";
 import type { Graph, NodeKind } from "@/lib/contract/graph";
+import type { VizLink, VizNode } from "./Graph3D";
 import { layout2d } from "./layout2d";
 import { edgeColor, NODE_COLOR, nodeSize, SELECTED } from "./palette";
-import type { VizLink, VizNode } from "./Graph3D";
 
 type Props = {
   graph: Graph;
@@ -62,7 +62,17 @@ function glyph(ctx: CanvasRenderingContext2D, kind: NodeKind, x: number, y: numb
   }
 }
 
-export default function Graph2D({ graph, nodes, links, selected, highlight, onSelect, onHover, width, height }: Props) {
+export default function Graph2D({
+  graph,
+  nodes,
+  links,
+  selected,
+  highlight,
+  onSelect,
+  onHover,
+  width,
+  height,
+}: Props) {
   const ref = useRef<ForceGraphMethods<N, VizLink> | undefined>(undefined);
   const positions = useMemo(() => layout2d(graph), [graph]);
   const data = useMemo(
@@ -126,7 +136,8 @@ export default function Graph2D({ graph, nodes, links, selected, highlight, onSe
             ctx.lineWidth = 2 / scale;
             ctx.stroke();
           }
-          const label = n.kind === "section" || n.kind === "document" || n.id === selected || scale > 2.2;
+          const label =
+            n.kind === "section" || n.kind === "document" || n.id === selected || scale > 2.2;
           if (label && !dim) {
             const size = Math.max(10 / scale, 2.5);
             ctx.font = `${size}px Geist Mono, ui-monospace, monospace`;

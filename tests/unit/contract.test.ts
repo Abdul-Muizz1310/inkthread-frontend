@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { Graph } from "@/lib/contract/graph";
 import { DeltaEvent, PageGeometry, StageEvent } from "@/lib/contract/api";
+import { Graph } from "@/lib/contract/graph";
 
 const load = (p: string) => JSON.parse(readFileSync(`tests/fixtures/samples/uspto/${p}`, "utf8"));
 

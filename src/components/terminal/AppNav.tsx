@@ -30,7 +30,7 @@ export function AppNav({ active }: AppNavProps) {
             home
           </Link>
           <a
-            href="https://github.com/Abdul-Muizz1310/inkthread-frontend"
+            href="https://github.com/Abdul-Muizz1310/inkthread-backend"
             target="_blank"
             rel="noopener noreferrer"
             className="transition-colors hover:text-foreground"
