@@ -1,0 +1,296 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ─────────────────────────────────────────────────────────────
+ * inkthread — house tokens (structure from paper-trail), with
+ * fuchsia as the signature thread. Dark only, like every sibling.
+ * ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Surfaces */
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --surface: #12121a;
+  --surface-hover: #1a1a25;
+  --card: #12121a;
+  --card-foreground: #fafafa;
+  --popover: #12121a;
+  --popover-foreground: #fafafa;
+
+  /* Text scale */
+  --fg-muted: #8a8aa3;
+  --fg-faint: #4a4a63;
+  --muted: #12121a;
+  --muted-foreground: #8a8aa3;
+
+  /* Borders */
+  --border: #1e1e2e;
+  --border-bright: #2a2a3d;
+  --input: #1e1e2e;
+
+  /* Accents — fuchsia is inkthread's signature thread */
+  --accent-thread: #e879f9;
+  --accent-thread-soft: rgba(232, 121, 249, 0.1);
+  --accent-sky: #38bdf8;
+  --accent-violet: #a78bfa;
+  --accent: #1a1a25;
+  --accent-foreground: #e879f9;
+  --primary: #e879f9;
+  --primary-foreground: #0a0a0a;
+  --secondary: #1a1a25;
+  --secondary-foreground: #fafafa;
+  --ring: #e879f9;
+
+  /* Semantic */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --destructive: #ef4444;
+
+  /* Graph families — validated with the dataviz validator, dark, all pairs
+     (worst CVD ΔE 6.9 → shape and line style carry the secondary encoding) */
+  --family-structure: #898781;
+  --family-document: #f0efec;
+  --family-notes: #c98500;
+  --family-terms: #008300;
+  --family-references: #3987e5;
+  --family-logic: #d55181;
+
+  /* Confidence tiers — the status palette, always printed with the letter */
+  --tier-a: #0ca30c;
+  --tier-b: #fab219;
+  --tier-c: #ec835a;
+  --tier-d: #d03b3b;
+
+  /* Shadows / glow */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 12px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 8px 30px rgb(0 0 0 / 0.6);
+  --glow-sm: 0 0 20px rgb(232 121 249 / 0.15);
+  --glow-md: 0 0 40px rgb(232 121 249 / 0.2);
+  --glow-lg: 0 0 80px rgb(232 121 249 / 0.15);
+
+  /* macOS traffic lights */
+  --mac-red: #ff5f56;
+  --mac-yellow: #ffbd2e;
+  --mac-green: #27c93f;
+
+  --radius: 0.625rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-faint: var(--fg-faint);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-border-bright: var(--border-bright);
+  --color-input: var(--input);
+  --color-accent-thread: var(--accent-thread);
+  --color-accent-thread-soft: var(--accent-thread-soft);
+  --color-accent-sky: var(--accent-sky);
+  --color-accent-violet: var(--accent-violet);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-destructive: var(--destructive);
+  --color-family-structure: var(--family-structure);
+  --color-family-document: var(--family-document);
+  --color-family-notes: var(--family-notes);
+  --color-family-terms: var(--family-terms);
+  --color-family-references: var(--family-references);
+  --color-family-logic: var(--family-logic);
+  --color-tier-a: var(--tier-a);
+  --color-tier-b: var(--tier-b);
+  --color-tier-c: var(--tier-c);
+  --color-tier-d: var(--tier-d);
+  --color-mac-red: var(--mac-red);
+  --color-mac-yellow: var(--mac-yellow);
+  --color-mac-green: var(--mac-green);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-newsreader);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+    outline-color: color-mix(in oklch, var(--ring) 50%, transparent);
+  }
+  html {
+    color-scheme: dark;
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  ::selection {
+    background: var(--accent-thread-soft);
+    color: var(--accent-thread);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * Atmosphere: dot grid with a fuchsia crown and a sky floor
+ * ───────────────────────────────────────────────────────────── */
+
+.bg-grid {
+  background-image:
+    radial-gradient(circle at 50% 0%, rgba(232, 121, 249, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 100%, rgba(56, 189, 248, 0.045) 0%, transparent 60%),
+    radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0);
+  background-size:
+    100% 100%,
+    100% 100%,
+    24px 24px;
+  background-attachment: fixed, fixed, fixed;
+}
+
+.bg-scanlines::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    180deg,
+    transparent 0,
+    transparent 2px,
+    rgba(255, 255, 255, 0.015) 2px,
+    rgba(255, 255, 255, 0.015) 3px
+  );
+  z-index: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * Terminal window chrome
+ * ───────────────────────────────────────────────────────────── */
+
+.terminal-glow {
+  box-shadow:
+    0 0 0 1px var(--border),
+    var(--shadow-lg),
+    var(--glow-sm);
+}
+
+.terminal-glow-strong {
+  box-shadow:
+    0 0 0 1px var(--border-bright),
+    var(--shadow-lg),
+    var(--glow-md);
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgb(232 121 249 / 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgb(232 121 249 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(232 121 249 / 0);
+  }
+}
+.pulse-ring {
+  animation: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * The page's own words: every verbatim string is set in a serif,
+ * so what the document says reads apart from what inkthread says.
+ * ───────────────────────────────────────────────────────────── */
+
+.verbatim {
+  font-family: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  font-feature-settings: "liga", "onum";
+  color: #ecebe6;
+  overflow-wrap: anywhere;
+}
+
+.verbatim mark {
+  background: transparent;
+  color: inherit;
+  border-bottom: 2px solid currentColor;
+  border-radius: 1px;
+}
+
+/* A thread drawn under an accent word in a headline */
+.thread-underline {
+  position: relative;
+  color: var(--accent-thread);
+}
+.thread-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -0.25rem;
+  height: 3px;
+  width: 100%;
+  background: color-mix(in oklch, var(--accent-thread) 60%, transparent);
+  box-shadow: 0 0 12px rgb(232 121 249 / 0.8);
+  border-radius: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * Reduced motion: honoured everywhere (the conventions require it;
+ * no sibling implemented it yet)
+ * ───────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-blink,
+  .pulse-ring {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
