@@ -47,3 +47,4 @@ next-env.d.ts
 /playwright/.cache/
 
 .vercel
+/tests/fixtures/samples/nist/
