@@ -94,6 +94,7 @@ export function UploadWindow() {
       {error && (
         <p
           role="alert"
+          data-testid="upload-error"
           className="mt-4 rounded-md border border-error/40 bg-error/10 px-3 py-2 font-mono text-xs text-error"
         >
           ⨯ {error}
