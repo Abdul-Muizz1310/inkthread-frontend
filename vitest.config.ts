@@ -12,7 +12,16 @@ export default defineConfig({
     testTimeout: 30_000,
     coverage: {
       provider: "v8",
-      include: ["src/lib/**", "src/features/**/*.ts"],
+      // Pure modules only; hooks, stores and components are covered by the E2E tier.
+      include: [
+        "src/lib/contract/**",
+        "src/lib/api/**",
+        "src/lib/graph/**",
+        "src/lib/text/**",
+        "src/features/build/reducer.ts",
+        "src/features/graph/layout2d.ts",
+        "src/features/page/scale.ts",
+      ],
       thresholds: { lines: 80, statements: 80, functions: 75, branches: 70 },
     },
   },
