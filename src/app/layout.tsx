@@ -1,5 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import { SITE } from "@/lib/site/config";
+import { ROOT_VIEWPORT, rootMetadata } from "@/lib/site/metadata";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -11,11 +13,8 @@ const newsreader = Newsreader({
   style: ["normal", "italic"],
 });
 
-export const metadata: Metadata = {
-  title: "inkthread — a document, as a graph of what depends on what",
-  description:
-    "Upload a PDF. inkthread reads it, then rules and agents thread every part to what it defines, cites, governs and overrides — each thread grounded in the page's own words.",
-};
+export const metadata: Metadata = rootMetadata(SITE);
+export const viewport: Viewport = ROOT_VIEWPORT;
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (

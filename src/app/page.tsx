@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { PageFrame } from "@/components/terminal/PageFrame";
 import { Prompt } from "@/components/terminal/Prompt";
 import { HeroGraph } from "@/features/landing/HeroGraph";
@@ -49,6 +50,8 @@ const GUARANTEES = [
     "a footnote with no note or a reference with no target is flagged on its part, never dropped",
   ],
 ] as const;
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function Home() {
   return (

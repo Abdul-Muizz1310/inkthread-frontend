@@ -18,6 +18,7 @@ export default defineConfig({
         "src/lib/api/**",
         "src/lib/graph/**",
         "src/lib/text/**",
+        "src/lib/site/**",
         "src/features/build/reducer.ts",
         "src/features/graph/layout2d.ts",
         "src/features/page/scale.ts",

@@ -3,7 +3,8 @@ import { AppNav } from "@/components/terminal/AppNav";
 import { StatusBar } from "@/components/terminal/StatusBar";
 import { DocumentScreen } from "@/features/workspace/DocumentScreen";
 
-export const metadata: Metadata = { title: "inkthread — document graph" };
+// An upload, kept for an hour: previewable when shared, never in search results.
+export const metadata: Metadata = { title: "document graph", robots: { index: false } };
 
 export default async function DocumentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
