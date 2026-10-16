@@ -86,7 +86,8 @@ Size grows with degree, clamped.
 - **Upload window** (`upload.pdf`):
   - a drop zone with a file picker;
   - the limits printed (PDF only, 15 MB, 40 pages);
-  - the privacy note (free LLM providers may log text; uploads are deleted after seven days);
+  - the privacy note (free LLM providers may log text; uploads are processed, not kept: the PDF goes when
+    its job ends, the graph and page images an hour later);
   - a progress bar during upload, with errors mapped from the API's codes;
   - success navigates to `/d/<id>`.
 - **Samples:** one card per sample with title, pages, node and edge counts, and a tier bar.
@@ -200,3 +201,5 @@ End to end (Playwright, mocked backend via `page.route`; the browser runs WebGL 
 - T-FE-16 The 2D toggle switches views and keeps the selection.
 - T-FE-17 Reduced motion: the landing graph does not auto-rotate.
 - T-FE-18 The export menu links to the four export URLs.
+- T-FE-19 An upload whose page images are gone (`410 upload_not_kept`) shows a note in the page pane
+  instead of a broken image, and the graph, outline and inspector still work.

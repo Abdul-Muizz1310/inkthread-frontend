@@ -72,6 +72,18 @@ test("selecting in the outline shows text, relationships and the page region (T-
   await expect(page.getByTestId("inspector")).toBeVisible();
 });
 
+test("an upload whose page images are gone shows a note, and the graph still works (T-FE-19)", async ({
+  page,
+}) => {
+  await mockApi(page, { pagesGone: true });
+  await page.goto(`/d/${DOC_ID}`);
+  await expect(page.getByTestId("page-gone")).toContainText("not kept");
+  await expect(page.getByRole("img", { name: /page 1 of the document/ })).toHaveCount(0);
+  const section = graph.nodes.find((n: { kind: string }) => n.kind === "section");
+  await page.getByTestId("outline").getByRole("button", { name: section.label }).click();
+  await expect(page.getByTestId("inspector")).toContainText(section.label);
+});
+
 test("turning a family off hides it in the legend (T-FE-15) and 2D keeps the selection (T-FE-16)", async ({
   page,
 }) => {

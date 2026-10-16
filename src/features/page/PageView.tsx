@@ -27,7 +27,10 @@ export function PageView({ docId, index, selected, page, onPage }: Props) {
   const size = pages.find((p) => p.number === page) ?? pages[0];
   const wrap = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(0);
-  const geometry = useGeometry(docId, page, selected !== null);
+  const src = pageImageUrl(docId, page);
+  // An upload's page images go after an hour or a restart (backend spec 08 § 2).
+  const [gone, setGone] = useState<string | null>(null);
+  const geometry = useGeometry(docId, page, selected !== null && gone !== src);
 
   useEffect(() => {
     const el = wrap.current;
@@ -122,12 +125,22 @@ export function PageView({ docId, index, selected, page, onPage }: Props) {
         </button>
       </div>
       <div ref={wrap} className="relative min-h-0 flex-1 overflow-auto bg-[#1b1b22] p-0">
-        {width > 0 && (
+        {gone === src && (
+          <p
+            data-testid="page-gone"
+            className="m-4 rounded-md border border-border px-3 py-2 font-mono text-xs text-fg-muted"
+          >
+            page images were not kept. uploads are processed, not kept: upload the PDF again to see
+            its pages. the graph is unaffected.
+          </p>
+        )}
+        {width > 0 && gone !== src && (
           <div className="relative" style={{ width, height }}>
             {/* biome-ignore lint/performance/noImgElement: page images come from the API at fixed size */}
             <img
-              src={pageImageUrl(docId, page)}
+              src={src}
               alt={`page ${page} of the document`}
+              onError={() => setGone(src)}
               width={width}
               height={height}
               className="block select-none"

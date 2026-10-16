@@ -9,7 +9,7 @@ export default function NotFound() {
       <TerminalWindow title="404.log" statusDot="red" className="mx-auto max-w-xl">
         <div className="space-y-2">
           <Prompt>cat document</Prompt>
-          <Prompt kind="comment">no such document — it may have expired after seven days</Prompt>
+          <Prompt kind="comment">no such document — uploads are kept for an hour</Prompt>
           <Link href="/" className="inline-block pt-3 font-mono text-sm text-accent-thread">
             $ cd ~
           </Link>

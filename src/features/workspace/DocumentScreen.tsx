@@ -41,7 +41,7 @@ export function DocumentScreen({ id }: { id: string }) {
         <Prompt>open {id.slice(0, 8)}</Prompt>
         <Prompt kind="comment">
           {missing
-            ? "no such document — uploads expire after seven days"
+            ? "no such document — uploads are kept for an hour"
             : "the backend did not answer; it may be waking up"}
         </Prompt>
         <Link href="/" className="mt-3 inline-block font-mono text-sm text-accent-thread">

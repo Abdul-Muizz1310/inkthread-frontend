@@ -103,7 +103,8 @@ export function UploadWindow() {
       <p className="mt-4 flex gap-2 font-mono text-[10.5px] leading-relaxed text-fg-faint">
         <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
         text you upload goes to free LLM providers through OpenRouter, which may log it. don&apos;t
-        upload confidential documents. uploads are deleted after seven days.
+        upload confidential documents. uploads are processed, not kept: the PDF is deleted once
+        processed, the graph an hour later.
       </p>
     </TerminalWindow>
   );

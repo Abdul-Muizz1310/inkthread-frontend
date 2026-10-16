@@ -61,6 +61,8 @@ export function sseBody(): string {
 export type MockOptions = {
   building?: boolean;
   upload?: { status: number; body: unknown; headers?: Record<string, string> };
+  /** The upload's page images are gone: page routes answer 410 upload_not_kept. */
+  pagesGone?: boolean;
 };
 
 export async function mockApi(page: Page, opts: MockOptions = {}) {
@@ -90,6 +92,8 @@ export async function mockApi(page: Page, opts: MockOptions = {}) {
       });
     }
     const pageImg = p.match(new RegExp(`^/documents/${DOC_ID}/pages/(\\d+)\\.png$`));
+    if (opts.pagesGone && p.startsWith(`/documents/${DOC_ID}/pages/`))
+      return json(route, { error: "upload_not_kept", message: "files are gone" }, 410);
     if (pageImg)
       return route.fulfill({
         status: 200,
