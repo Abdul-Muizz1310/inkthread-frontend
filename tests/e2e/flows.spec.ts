@@ -24,6 +24,28 @@ test("upload posts the PDF and lands on the document (T-FE-11)", async ({ page }
   await expect(page).toHaveURL(new RegExp(`/d/${DOC_ID}`));
 });
 
+test("reads go through the proxy and an upload goes token-then-backend (T-PX-16)", async ({
+  page,
+}) => {
+  const calls = await mockApi(page);
+  await page.goto("/");
+  await expect(page.getByText("USPTO fee schedule").first()).toBeVisible();
+  await page.setInputFiles("#pdf-input", {
+    name: "fees.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.7 fake"),
+  });
+  await expect(page).toHaveURL(new RegExp(`/d/${DOC_ID}`));
+  await expect(page.getByTestId("pipeline-log")).toBeVisible();
+  const token = calls.indexOf("POST /api/upload-token");
+  const post = calls.indexOf("POST http://api.test/documents");
+  expect(token).toBeGreaterThanOrEqual(0);
+  expect(post).toBeGreaterThan(token);
+  expect(calls).toContain("GET /api/backend/samples");
+  expect(calls.some((c) => c.startsWith(`GET /api/backend/documents/${DOC_ID}`))).toBe(true);
+  expect(calls.filter((c) => c.startsWith("GET http://api.test"))).toEqual([]);
+});
+
 test("a 413 and a 429 show their messages (T-FE-11)", async ({ page }) => {
   await mockApi(page, {
     upload: { status: 413, body: { error: "file_too_large", message: "too big" } },
@@ -108,10 +130,10 @@ test("the export menu links to the four formats (T-FE-18)", async ({ page }) => 
     .locator("a")
     .evaluateAll((as) => as.map((a) => a.getAttribute("href")));
   expect(hrefs).toEqual([
-    `http://api.test/documents/${DOC_ID}/graph`,
-    `http://api.test/documents/${DOC_ID}/graph.jsonld`,
-    `http://api.test/documents/${DOC_ID}/graph.graphml`,
-    `http://api.test/documents/${DOC_ID}/graph.cypher`,
+    `/api/backend/documents/${DOC_ID}/graph`,
+    `/api/backend/documents/${DOC_ID}/graph.jsonld`,
+    `/api/backend/documents/${DOC_ID}/graph.graphml`,
+    `/api/backend/documents/${DOC_ID}/graph.cypher`,
   ]);
 });
 

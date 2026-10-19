@@ -68,22 +68,45 @@ export type MockOptions = {
   noReading?: boolean;
 };
 
+/** The proxy's prefix: every browser read goes through the same-origin signing proxy (spec 02). */
+export const PROXY = "/api/backend";
+export const UPLOAD_TOKEN = "e2e-upload-token";
+
+/**
+ * Stands in for the backend behind the proxy. Reads arrive at `/api/backend/...` on the site's own
+ * origin; the upload asks `/api/upload-token`, then posts straight to the backend with the token.
+ * Any other request to the backend's origin means a read bypassed the proxy, and fails loudly.
+ * Returns the log of calls in order.
+ */
 export async function mockApi(page: Page, opts: MockOptions = {}) {
   let built = !opts.building;
+  const calls: string[] = [];
+  await page.route("**/api/upload-token", async (route) => {
+    calls.push(`${route.request().method()} /api/upload-token`);
+    return json(route, { token: UPLOAD_TOKEN, url: `${API}/documents`, expires_at: 0 });
+  });
   await page.route(`${API}/**`, async (route) => {
     const req = route.request();
-    const url = new URL(req.url());
-    const p = url.pathname;
+    const p = new URL(req.url()).pathname;
     if (req.method() === "OPTIONS") return route.fulfill({ status: 204, headers: cors });
+    calls.push(`${req.method()} ${API}${p}`);
+    if (p !== "/documents" || req.method() !== "POST")
+      return json(route, { error: "bypassed_proxy", message: `${p} skipped the proxy` }, 599);
+    if (req.headers()["x-platform-token"] !== UPLOAD_TOKEN)
+      return json(route, { error: "missing_platform_token", message: "no token" }, 401);
+    const u = opts.upload ?? {
+      status: 202,
+      body: { document: doc("processing"), job: job("running"), deduplicated: false },
+    };
+    if (u.status === 202) built = false;
+    return json(route, u.body, u.status, u.headers);
+  });
+  await page.route(`**${PROXY}/**`, async (route) => {
+    const req = route.request();
+    const p = new URL(req.url()).pathname.slice(PROXY.length);
+    calls.push(`${req.method()} ${PROXY}${p}`);
+    if (req.method() !== "GET") return json(route, { error: "method", message: "reads only" }, 405);
     if (p === "/samples") return json(route, { items: [doc("ready")] });
-    if (p === "/documents" && req.method() === "POST") {
-      const u = opts.upload ?? {
-        status: 202,
-        body: { document: doc("processing"), job: job("running"), deduplicated: false },
-      };
-      if (u.status === 202) built = false;
-      return json(route, u.body, u.status, u.headers);
-    }
     if (p === `/documents/${DOC_ID}`) return json(route, doc(built ? "ready" : "processing"));
     if (p === `/documents/${DOC_ID}/graph`) return json(route, graph);
     if (p === `/documents/${DOC_ID}/reading`)
@@ -123,4 +146,5 @@ export async function mockApi(page: Page, opts: MockOptions = {}) {
       });
     return json(route, { error: "not_found", message: "no such thing" }, 404);
   });
+  return calls;
 }

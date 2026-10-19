@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 // Security headers (house pattern from slowquery-dashboard-frontend), widened for
-// WebGL: three.js may spin up blob: workers, and page images come from the API.
+// WebGL: three.js may spin up blob: workers. Reads and page images come through the
+// same-origin proxy (spec 02); only the direct upload connects to the backend.
 const apiOrigin = (() => {
   try {
     return new URL(process.env.NEXT_PUBLIC_API_URL ?? "").origin;
@@ -16,7 +17,7 @@ const contentSecurityPolicy = [
   "default-src 'self'",
   "base-uri 'self'",
   "font-src 'self' data:",
-  `img-src 'self' data: blob:${apiOrigin ? ` ${apiOrigin}` : ""}`,
+  "img-src 'self' data: blob:",
   "style-src 'self' 'unsafe-inline'",
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   "worker-src 'self' blob:",

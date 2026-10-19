@@ -1,16 +1,20 @@
 /**
- * The typed API client. Every call builds its URL from env, applies a timeout, parses JSON and
- * validates it with Zod, and maps every failure into the error union in ./errors.
+ * The typed API client. Every call goes to the same-origin signing proxy (spec 02), applies a
+ * timeout, parses JSON and validates it with Zod, and maps every failure into the error union in
+ * ./errors.
  */
 import type { z } from "zod";
 import { ErrorEnvelope } from "@/lib/contract/api";
-import { apiBase } from "@/lib/env";
 import { HttpError, NetworkError, ParseError, TimeoutError } from "./errors";
 
 const DEFAULT_TIMEOUT_MS = 30_000;
 
+/** The proxy route that signs and forwards every browser read (spec 02 § 2). */
+export const PROXY_PREFIX = "/api/backend";
+
+/** A same-origin URL for a backend path such as `/samples`. */
 export function apiUrl(path: string): string {
-  return new URL(path, apiBase()).toString();
+  return `${PROXY_PREFIX}${path}`;
 }
 
 export async function toHttpError(response: Response): Promise<HttpError> {
