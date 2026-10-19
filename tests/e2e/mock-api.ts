@@ -4,6 +4,7 @@ import type { Page, Route } from "@playwright/test";
 export const API = "http://api.test";
 const DIR = "tests/fixtures/samples/uspto";
 export const graph = JSON.parse(readFileSync(`${DIR}/graph.json`, "utf8"));
+export const reading = JSON.parse(readFileSync(`${DIR}/reading.json`, "utf8"));
 const events: { id: number; event: string; data: unknown }[] = JSON.parse(
   readFileSync(`${DIR}/events.json`, "utf8"),
 );
@@ -63,6 +64,8 @@ export type MockOptions = {
   upload?: { status: number; body: unknown; headers?: Record<string, string> };
   /** The upload's page images are gone: page routes answer 410 upload_not_kept. */
   pagesGone?: boolean;
+  /** The document has no reading yet: `/reading` answers 409 graph_not_ready. */
+  noReading?: boolean;
 };
 
 export async function mockApi(page: Page, opts: MockOptions = {}) {
@@ -83,6 +86,10 @@ export async function mockApi(page: Page, opts: MockOptions = {}) {
     }
     if (p === `/documents/${DOC_ID}`) return json(route, doc(built ? "ready" : "processing"));
     if (p === `/documents/${DOC_ID}/graph`) return json(route, graph);
+    if (p === `/documents/${DOC_ID}/reading`)
+      return opts.noReading
+        ? json(route, { error: "graph_not_ready", message: "not yet" }, 409)
+        : json(route, reading);
     if (p === `/jobs/${JOB_ID}/events`) {
       built = true;
       return route.fulfill({

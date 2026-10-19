@@ -17,6 +17,7 @@ import { buildIndex } from "@/lib/graph/index";
 import { shortestPath } from "@/lib/graph/path";
 import { cn, docName } from "@/lib/utils";
 import { Legend } from "./Legend";
+import { ReadingMenu } from "./ReadingMenu";
 
 type Props = { docId: string; graph: Graph; onReplay?: () => void };
 
@@ -184,6 +185,7 @@ export function Workspace({ docId, graph, onReplay }: Props) {
               <RotateCcw className="h-3 w-3" /> replay build
             </button>
           )}
+          <ReadingMenu docId={docId} onSelect={onSelect} />
           <details className="relative">
             <summary className="flex cursor-pointer list-none items-center gap-1 rounded-md border border-border px-2 py-0.5 font-mono text-[11px] text-fg-muted hover:text-foreground">
               <Download className="h-3 w-3" /> export

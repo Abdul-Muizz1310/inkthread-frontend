@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { DOC_ID, graph, mockApi } from "./mock-api";
+import { DOC_ID, graph, mockApi, reading } from "./mock-api";
 
 test("landing renders hero, upload, samples, stages and the 3D graph (T-FE-10)", async ({
   page,
@@ -113,6 +113,32 @@ test("the export menu links to the four formats (T-FE-18)", async ({ page }) => 
     `http://api.test/documents/${DOC_ID}/graph.graphml`,
     `http://api.test/documents/${DOC_ID}/graph.cypher`,
   ]);
+});
+
+test("the reading menu shows the verdict and selects a table's node (T-FE-21)", async ({
+  page,
+}) => {
+  await mockApi(page);
+  await page.goto(`/d/${DOC_ID}`);
+  await page.getByText("reading", { exact: true }).click();
+  const menu = page.getByTestId("reading");
+  await expect(menu.getByTestId("verification")).toContainText(
+    `${reading.verification.disagreements} disagreements`,
+  );
+  await expect(menu.getByTestId("reading-table")).toHaveCount(reading.tables.length);
+  const first = reading.tables[0];
+  await menu.getByTestId("reading-table").first().getByRole("button", { name: "select" }).click();
+  expect(graph.nodes.some((n: { id: string }) => n.id === first.node_id)).toBe(true);
+  await expect(page.getByTestId("inspector")).toContainText(first.node_id.slice(0, 14));
+  await expect(page.getByTestId("inspector")).toContainText(`p.${first.page}`);
+});
+
+test("a document with no reading shows no reading menu (T-FE-21)", async ({ page }) => {
+  await mockApi(page, { noReading: true });
+  await page.goto(`/d/${DOC_ID}`);
+  await expect(page.getByTestId("workspace")).toBeVisible();
+  await expect(page.getByTestId("exports")).toBeAttached();
+  await expect(page.getByTestId("reading")).toHaveCount(0);
 });
 
 test.describe("reduced motion (T-FE-17)", () => {

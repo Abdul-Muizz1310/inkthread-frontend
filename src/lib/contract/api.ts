@@ -168,3 +168,33 @@ export const WhyOut = z.object({
   ),
 });
 export type WhyOut = z.infer<typeof WhyOut>;
+
+/** `GET /documents/{id}/reading` (backend spec 11): inkgrid's tables and verification summary. */
+export const ReadingOut = z.object({
+  schema: z.literal("inkthread.reading/1"),
+  document_id: z.string(),
+  doc_sha256: z.string(),
+  inkgrid_version: z.string(),
+  verification: z.object({
+    ok: z.boolean(),
+    engine: z.string(),
+    checked: z.number().int(),
+    disagreements: z.number().int(),
+    defects: z.array(z.object({ code: z.string(), page: z.number().int(), message: z.string() })),
+  }),
+  tables: z.array(
+    z.object({
+      id: z.string(),
+      node_id: z.string().nullable(),
+      page: z.number().int(),
+      bbox: z.tuple([z.number(), z.number(), z.number(), z.number()]),
+      header_rows: z.number().int(),
+      rows: z.array(z.array(z.string())),
+      markdown: z.string(),
+    }),
+  ),
+  findings: z.array(
+    z.object({ code: z.string(), severity: z.string(), page: z.number().int().nullable() }),
+  ),
+});
+export type ReadingOut = z.infer<typeof ReadingOut>;

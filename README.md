@@ -29,6 +29,7 @@ $ open /d/<id>                   # live: stages tick, the graph grows as agents 
 - ✒️ **Verbatim in serif** — the page's own words in Newsreader; everything inkthread says in Geist Mono
 - 🔎 **Inspector** — roles with their cues, threads grouped by type with quotes, makers and tiers, a "why" log
 - 🧭 **Path to…** — the shortest typed path between two parts, each hop with its quote
+- 📑 **Reading** — inkgrid's tables (with Markdown) and its second-engine verdict, one click from each table's node
 - 📡 **Live build** — the pipeline's SSE events animate the graph and a `pipeline.log`; replay any finished build
 - ♿ **Accessible** — keyboard outline and search, visible focus, reduced motion honoured everywhere
 

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { apiUrl, getJson, withColdStartRetry } from "@/lib/api/client";
-import { DocumentOut, PageGeometry, SamplesOut, WhyOut } from "@/lib/contract/api";
+import { DocumentOut, PageGeometry, ReadingOut, SamplesOut, WhyOut } from "@/lib/contract/api";
 import { Graph } from "@/lib/contract/graph";
 
 export function useDocument(id: string) {
@@ -23,6 +23,17 @@ export function useGraph(id: string, enabled: boolean) {
     queryFn: () =>
       getJson(`/documents/${encodeURIComponent(id)}/graph`, Graph, { timeoutMs: 45_000 }),
     enabled,
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+}
+
+/** What inkgrid read; a 409 (no reading kept yet) is final, so it is not retried. */
+export function useReading(id: string) {
+  return useQuery({
+    queryKey: ["reading", id],
+    queryFn: () =>
+      getJson(`/documents/${encodeURIComponent(id)}/reading`, ReadingOut, { timeoutMs: 45_000 }),
+    retry: false,
     staleTime: Number.POSITIVE_INFINITY,
   });
 }

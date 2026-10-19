@@ -141,6 +141,10 @@ Resizable panes. The left and right columns collapse to tabs below 1024 px wide.
   - **path to…**, which picks a second node by search and shows the shortest typed path between them
     as a chain of edges, each with its quote.
 - **Exports:** a menu with JSON, JSON-LD, GraphML and Cypher.
+- **Reading:** a menu beside the exports with what inkgrid read (backend spec 11): the second
+  engine's verdict (verified, or how many disagreements, over how many pages, by which engine) and
+  the document's tables, each with its page and size, a button that selects its node, and its
+  Markdown. A document with no reading yet (`409`) shows no menu.
 
 ## 4. Behaviour
 
@@ -203,3 +207,7 @@ End to end (Playwright, mocked backend via `page.route`; the browser runs WebGL 
 - T-FE-18 The export menu links to the four export URLs.
 - T-FE-19 An upload whose page images are gone (`410 upload_not_kept`) shows a note in the page pane
   instead of a broken image, and the graph, outline and inspector still work.
+- T-FE-20 The reading contract parses the sample's `/reading` body and rejects one with another
+  `schema` or a table without rows.
+- T-FE-21 The reading menu shows the verification verdict and lists the tables; choosing a table
+  selects its node; a document whose reading answers `409` shows no menu.
