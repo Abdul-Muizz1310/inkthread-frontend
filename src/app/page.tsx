@@ -4,6 +4,8 @@ import { Prompt } from "@/components/terminal/Prompt";
 import { HeroGraph } from "@/features/landing/HeroGraph";
 import { Samples } from "@/features/landing/Samples";
 import { UploadWindow } from "@/features/upload/UploadWindow";
+import { SITE } from "@/lib/site/config";
+import { StructuredData } from "@/lib/site/structured-data";
 
 const STAGES = [
   [
@@ -60,6 +62,7 @@ export default function Home() {
       statusLeft="inkthread.dev ~/"
       statusRight="UTF-8 · verbatim · grounded"
     >
+      <StructuredData site={SITE} />
       <section className="grid items-center gap-10 lg:grid-cols-[1.05fr_1fr]">
         <div className="space-y-6">
           <div className="space-y-1.5">

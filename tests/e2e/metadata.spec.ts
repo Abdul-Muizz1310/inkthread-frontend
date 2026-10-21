@@ -38,6 +38,26 @@ test("the home page can be indexed (T-FE-28)", async ({ page }) => {
   await expect(page.locator('head meta[name="robots"]')).toHaveCount(0);
 });
 
+test("the home page carries the site's structured data (T-FE-31)", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/");
+  const scripts = page.locator('script[type="application/ld+json"]');
+  await expect(scripts).toHaveCount(1);
+  const graph = JSON.parse((await scripts.textContent()) ?? "")["@graph"];
+  expect(graph.map((node: { "@type": string }) => node["@type"])).toEqual([
+    "WebSite",
+    "WebApplication",
+    "Person",
+  ]);
+  expect(graph[0]).toMatchObject({ url: `${SITE.url}/`, name: SITE.name });
+});
+
+test("a document page carries no structured data (T-FE-31)", async ({ page }) => {
+  await mockApi(page);
+  await page.goto(`/d/${DOC_ID}`);
+  await expect(page.locator('script[type="application/ld+json"]')).toHaveCount(0);
+});
+
 test("every metadata route answers with its content type (T-FE-28)", async ({ request }) => {
   const routes: [string, RegExp][] = [
     ["/opengraph-image", /^image\/png/],
