@@ -1,5 +1,9 @@
-/** Client-side upload checks and the XHR upload (fetch cannot report upload progress). */
-import { apiUrl } from "@/lib/api/client";
+/**
+ * Client-side upload checks and the upload: a one-minute token from this site's server, then the
+ * PDF straight to the backend by XHR (fetch cannot report upload progress). Uploads skip the proxy
+ * because Vercel Functions take bodies up to 4.5 MB and inkthread accepts 15 MB (spec 02 § 3).
+ */
+import { z } from "zod";
 import { ErrorEnvelope, UploadOut } from "@/lib/contract/api";
 
 export const MAX_BYTES = 15 * 1024 * 1024;
@@ -42,13 +46,41 @@ export function messageFor(code: string, retryAfter: string | null): string {
 
 export type UploadResult = { ok: true; data: UploadOut } | { ok: false; message: string };
 
-export function uploadPdf(
+export const UPLOAD_NOT_AUTHORISED =
+  "The site could not authorise the upload; try again in a minute.";
+
+const UploadToken = z.object({ token: z.string().min(1), url: z.string().url() });
+type UploadToken = z.infer<typeof UploadToken>;
+
+async function uploadToken(): Promise<UploadToken | null> {
+  try {
+    const response = await fetch("/api/upload-token", { method: "POST", cache: "no-store" });
+    if (!response.ok) return null;
+    const parsed = UploadToken.safeParse(await response.json());
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function uploadPdf(
   file: File,
+  onProgress: (fraction: number) => void,
+): Promise<UploadResult> {
+  const grant = await uploadToken();
+  if (grant === null) return { ok: false, message: UPLOAD_NOT_AUTHORISED };
+  return send(file, grant, onProgress);
+}
+
+function send(
+  file: File,
+  grant: UploadToken,
   onProgress: (fraction: number) => void,
 ): Promise<UploadResult> {
   return new Promise((resolve) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", apiUrl("/documents"));
+    xhr.open("POST", grant.url);
+    xhr.setRequestHeader("X-Platform-Token", grant.token);
     xhr.timeout = 120_000;
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) onProgress(e.loaded / e.total);

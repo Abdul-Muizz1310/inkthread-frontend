@@ -30,6 +30,7 @@ $ open /d/<id>                   # live: stages tick, the graph grows as agents 
 - 🔎 **Inspector** — roles with their cues, threads grouped by type with quotes, makers and tiers, a "why" log
 - 🧭 **Path to…** — the shortest typed path between two parts, each hop with its quote
 - 📑 **Reading** — inkgrid's tables (with Markdown) and its second-engine verdict, one click from each table's node
+- 🔐 **Signed proxy** — every browser read goes through a same-origin route that mints a 60-second platform token; uploads get a one-minute token and go straight to the backend
 - 📡 **Live build** — the pipeline's SSE events animate the graph and a `pipeline.log`; replay any finished build
 - ♿ **Accessible** — keyboard outline and search, visible focus, reduced motion honoured everywhere
 

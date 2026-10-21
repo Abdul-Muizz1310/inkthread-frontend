@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { z } from "zod";
-import { getJson, isColdStartError, withColdStartRetry } from "@/lib/api/client";
+import { apiUrl, getJson, isColdStartError, withColdStartRetry } from "@/lib/api/client";
 import { HttpError, NetworkError, ParseError, TimeoutError } from "@/lib/api/errors";
 
 const S = z.object({ ok: z.boolean() });
@@ -65,5 +65,21 @@ describe("cold start retry", () => {
     });
     await expect(withColdStartRetry(op, 1)).resolves.toBe(7);
     expect(op).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("same-origin proxy URLs (T-PX-14)", () => {
+  it("points every data call at /api/backend", () => {
+    expect(apiUrl("/samples")).toBe("/api/backend/samples");
+    expect(apiUrl("/documents/x/pages/1.png")).toBe("/api/backend/documents/x/pages/1.png");
+  });
+  it("fetches the proxy path", async () => {
+    const f = vi.fn(
+      async (_input: RequestInfo | URL, _init?: RequestInit) =>
+        new Response(JSON.stringify({ ok: true }), { status: 200 }),
+    );
+    vi.stubGlobal("fetch", f);
+    await getJson("/samples", S);
+    expect(f.mock.calls[0]?.[0]).toBe("/api/backend/samples");
   });
 });

@@ -59,7 +59,10 @@ export function useJobStream(jobId: string | null): BuildState {
     let closed = false;
     const open = () => {
       if (closed || done.current) return;
-      const url = new URL(apiUrl(`/jobs/${encodeURIComponent(jobId)}/events`));
+      const url = new URL(
+        apiUrl(`/jobs/${encodeURIComponent(jobId)}/events`),
+        window.location.origin,
+      );
       if (last.current > 0) url.searchParams.set("after", String(last.current));
       source = new EventSource(url);
       for (const name of Object.keys(SCHEMAS) as Name[]) {
